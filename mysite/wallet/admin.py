@@ -13,3 +13,5 @@ class TransactionCategoryAdmin(admin.ModelAdmin):
 
 admin.site.register(models.Account)
 admin.site.register(models.TransationCategory)
+admin.site.register(models.Operation)
+admin.site.register(models.OperationLog)
