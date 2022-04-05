@@ -49,7 +49,7 @@ class OperationLog(models.Model):
     """
 
     operation = models.ForeignKey(
-        Operation, on_delete=models.CASCADE, blank=False)
+        Operation, on_delete=models.CASCADE, blank=False, db_index=True, db_column="operation_code")
     operation_data = models.JSONField(blank=False)
     created_date = models.DateTimeField(default=timezone.now)
 
