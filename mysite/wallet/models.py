@@ -1,6 +1,7 @@
 """
 Wallet application models.
 """
+from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
@@ -28,7 +29,7 @@ class Operation(models.Model):
                             db_index=True, unique=True, primary_key=True)
     description = models.CharField(max_length=150, blank=False)
     active = models.BooleanField(default=True, blank=False)
-    created_date = models.DateTimeField(default=timezone.now)
+    created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
         return f"({self.code}) {self.description} - {self.created_date}"
@@ -80,7 +81,7 @@ class Account(models.Model):
         return f"{self.name}"
 
 
-class TransationCategory(models.Model):
+class TransactionCategory(models.Model):
     """
     Represents a simple income/expense (transaction) category.
 
@@ -98,6 +99,9 @@ class TransationCategory(models.Model):
     )
     name = models.CharField(max_length=20)
     category_type = models.CharField(max_length=1, choices=CATEGORY_TYPE)
+
+    def __str__(self) -> str:
+        return f"{self.name} ({self.category_type})"
 
 
 class Transaction(models.Model):
@@ -120,12 +124,20 @@ class Transaction(models.Model):
         Transaction notes
     """
 
-    transaction_date = models.DateTimeField()
-    created_date = models.DateTimeField()
+    transaction_date = models.DateField()
     account = models.ForeignKey(Account, on_delete=models.CASCADE, blank=False)
     transaction_category = models.ForeignKey(
-        TransationCategory, on_delete=models.CASCADE, blank=False
+        TransactionCategory, on_delete=models.CASCADE, blank=False
     )
     amount = models.IntegerField()
     description = models.CharField(max_length=50, blank=False)
     notes = models.CharField(max_length=200, blank=True, null=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, blank=False, related_name="transaction_created_by_user")
+    modified_date = models.DateTimeField(auto_now=True)
+    modified_by = models.ForeignKey(
+        User, on_delete=models.CASCADE, blank=False, related_name="transaction_modified_by_user")
+
+    def __str__(self) -> str:
+        return f"{self.transaction_category.name} - {self.description}: {self.amount} ({self.transaction_date})"
