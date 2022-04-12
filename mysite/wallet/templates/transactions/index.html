@@ -1,0 +1,27 @@
+<a href="{% url 'create_transaction' %}">New Transaction</button>
+    <table>
+        <thead>
+            <tr>
+                <th>Transaction Date</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if transaction_history %}
+            {% for transaction in transaction_history %}
+            <tr>
+                <td>{{ transaction.transaction_date|date:"SHORT_DATE_FORMAT" }}</td>
+                <td>{{ transaction.transaction_category }}</td>
+                <td>{{ transaction.description }}</td>
+                <td>${{ transaction.amount|floatformat:"2g" }}</td>
+            </tr>
+            {% endfor %}
+            {% else %}
+            <tr>
+                <td colspan="4">No transactions found.</td>
+            </tr>
+            {% endif %}
+        </tbody>
+    </table>
